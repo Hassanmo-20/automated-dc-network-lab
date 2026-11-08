@@ -1,0 +1,97 @@
+# FRRouting Configuration for {{ router.name }} (Role: {{ router.role|upper }})
+# Generated automatically by netauto - DO NOT EDIT MANUALLY
+# Single Source of Truth: inventory/fabric.yml
+
+frr version 10.2.1
+frr defaults traditional
+hostname {{ router.name }}
+log stdout informational
+service integrated-vtysh-config
+!
+interface lo
+ ip address {{ router.loopback.ipv4 }}
+ ip ospf area {{ ospf.area }}
+!
+{% for iface in router.fabric_interfaces %}
+interface {{ iface.name }}
+ description Link to {{ iface.peer_node }}:{{ iface.peer_interface }}
+ ip address {{ iface.ipv4 }}
+ ip ospf network point-to-point
+ ip ospf area {{ ospf.area }}
+!
+{% endfor %}
+{% if router.role == 'leaf' and router.server_interface %}
+interface {{ router.server_interface.name }}
+ description Link to server {{ router.connected_server.name }}
+ ip address {{ router.server_interface.ipv4 }}
+!
+{% endif %}
+router ospf
+ ospf router-id {{ router.ospf.router_id }}
+ passive-interface lo
+ auto-cost reference-bandwidth {{ ospf.reference_bandwidth_mbps }}
+!
+router bgp {{ router.asn }}
+ bgp router-id {{ router.loopback.ipv4.split('/')[0] }}
+ bgp log-neighbor-changes
+ no bgp default ipv4-unicast
+ {% if bgp.multipath_as_path_relax %}
+ bgp bestpath as-path multipath-relax
+ {% endif %}
+!
+{% for neighbor in router.bgp_neighbors %}
+ neighbor {{ neighbor.peer_ip }} remote-as {{ neighbor.remote_as }}
+ neighbor {{ neighbor.peer_ip }} description {{ neighbor.peer_name }}
+{% endfor %}
+!
+ address-family ipv4 unicast
+{% if ecmp.enabled %}
+  maximum-paths {{ ecmp.maximum_paths }}
+{% endif %}
+{% if router.role == 'leaf' and router.server_subnet %}
+  network {{ router.server_subnet }}
+{% for neighbor in router.bgp_neighbors %}
+  neighbor {{ neighbor.peer_ip }} activate
+  neighbor {{ neighbor.peer_ip }} route-map RM-SPINE-IN in
+  neighbor {{ neighbor.peer_ip }} route-map RM-SPINE-OUT out
+{% endfor %}
+{% elif router.role == 'spine' %}
+{% for neighbor in router.bgp_neighbors %}
+  neighbor {{ neighbor.peer_ip }} activate
+  neighbor {{ neighbor.peer_ip }} route-map RM-LEAF-IN in
+  neighbor {{ neighbor.peer_ip }} route-map RM-LEAF-OUT out
+{% endfor %}
+{% endif %}
+ exit-address-family
+!
+{% if router.role == 'leaf' %}
+! Route Filtering Policies for Leaf:
+! Accept only remote server subnets (172.16.0.0/16 ge 24 le 24)
+! Advertise only local server subnet ({{ router.server_subnet }})
+ip prefix-list PL-LOCAL-SERVER seq 10 permit {{ router.server_subnet }}
+ip prefix-list PL-REMOTE-SERVERS seq 10 permit 172.16.0.0/16 ge 24 le 24
+!
+route-map RM-SPINE-OUT permit 10
+ description Advertise local server subnet to Spines
+ match ip address prefix-list PL-LOCAL-SERVER
+!
+route-map RM-SPINE-IN permit 10
+ description Receive remote server subnets from Spines
+ match ip address prefix-list PL-REMOTE-SERVERS
+!
+{% elif router.role == 'spine' %}
+! Route Filtering Policies for Spine:
+! Accept and re-advertise only valid server prefixes (172.16.0.0/16 ge 24 le 24)
+ip prefix-list PL-DC-SERVERS seq 10 permit 172.16.0.0/16 ge 24 le 24
+!
+route-map RM-LEAF-IN permit 10
+ description Ingest valid server subnets from Leafs
+ match ip address prefix-list PL-DC-SERVERS
+!
+route-map RM-LEAF-OUT permit 10
+ description Propagate valid server subnets to Leafs
+ match ip address prefix-list PL-DC-SERVERS
+!
+{% endif %}
+line vty
+!

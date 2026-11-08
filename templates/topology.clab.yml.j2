@@ -1,0 +1,34 @@
+# Containerlab Topology: {{ lab.name }}
+# Generated automatically by netauto - DO NOT EDIT MANUALLY
+
+name: {{ lab.name }}
+
+topology:
+  nodes:
+{% for router in routers %}
+    {{ router.name }}:
+      kind: linux
+      image: {{ lab.images.frr }}
+      binds:
+        - configs/{{ router.name }}/daemons:/etc/frr/daemons
+        - configs/{{ router.name }}/frr.conf:/etc/frr/frr.conf
+        - configs/{{ router.name }}/vtysh.conf:/etc/frr/vtysh.conf
+{% endfor %}
+
+{% for server in servers %}
+    {{ server.name }}:
+      kind: linux
+      image: {{ lab.images.host }}
+      exec:
+        - ip addr add {{ server.ipv4 }} dev {{ server.interface }}
+        - ip link set {{ server.interface }} up
+        - ip route replace default via {{ server.gateway }}
+{% endfor %}
+
+  links:
+{% for link in links %}
+    - endpoints: ["{{ link.source.node }}:{{ link.source.interface }}", "{{ link.target.node }}:{{ link.target.interface }}"]
+{% endfor %}
+{% for server in servers %}
+    - endpoints: ["{{ server.connected_to }}:{{ server.leaf_interface }}", "{{ server.name }}:{{ server.interface }}"]
+{% endfor %}

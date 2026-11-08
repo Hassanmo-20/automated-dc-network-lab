@@ -1,0 +1,4 @@
+PING 172.16.12.10 (172.16.12.10): 56 data bytes
+
+--- 172.16.12.10 ping statistics ---
+3 packets transmitted, 0 packets received, 100% packet loss

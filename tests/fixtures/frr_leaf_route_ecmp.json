@@ -1,0 +1,78 @@
+{
+  "172.16.11.0/24": [
+    {
+      "prefix": "172.16.11.0/24",
+      "protocol": "bgp",
+      "metric": 20,
+      "nexthops": [
+        {
+          "ip": "10.0.0.0",
+          "interfaceName": "eth1",
+          "active": true
+        },
+        {
+          "ip": "10.0.0.2",
+          "interfaceName": "eth2",
+          "active": true
+        }
+      ]
+    }
+  ],
+  "172.16.12.0/24": [
+    {
+      "prefix": "172.16.12.0/24",
+      "protocol": "bgp",
+      "metric": 20,
+      "nexthops": [
+        {
+          "ip": "10.0.0.0",
+          "interfaceName": "eth1",
+          "active": true
+        },
+        {
+          "ip": "10.0.0.2",
+          "interfaceName": "eth2",
+          "active": true
+        }
+      ]
+    }
+  ],
+  "172.16.13.0/24": [
+    {
+      "prefix": "172.16.13.0/24",
+      "protocol": "bgp",
+      "metric": 20,
+      "nexthops": [
+        {
+          "ip": "10.0.0.0",
+          "interfaceName": "eth1",
+          "active": true
+        },
+        {
+          "ip": "10.0.0.2",
+          "interfaceName": "eth2",
+          "active": true
+        }
+      ]
+    }
+  ],
+  "172.16.14.0/24": [
+    {
+      "prefix": "172.16.14.0/24",
+      "protocol": "bgp",
+      "metric": 20,
+      "nexthops": [
+        {
+          "ip": "10.0.0.0",
+          "interfaceName": "eth1",
+          "active": true
+        },
+        {
+          "ip": "10.0.0.2",
+          "interfaceName": "eth2",
+          "active": true
+        }
+      ]
+    }
+  ]
+}

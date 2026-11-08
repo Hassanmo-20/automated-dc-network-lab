@@ -1,0 +1,117 @@
+{
+  "timestamp": "2026-11-07T21:00:00Z",
+  "overall_status": "PASS",
+  "container_health": {
+    "total_expected": 10,
+    "running_count": 10,
+    "running_nodes": [
+      "spine1",
+      "spine2",
+      "leaf1",
+      "leaf2",
+      "leaf3",
+      "leaf4",
+      "host1",
+      "host2",
+      "host3",
+      "host4"
+    ],
+    "missing_nodes": [],
+    "status": "PASS"
+  },
+  "ospf_health": {
+    "spine1": {
+      "router_name": "spine1",
+      "router_id": "10.255.0.1",
+      "neighbors": [],
+      "expected_neighbor_count": 4,
+      "all_full": true,
+      "status": "PASS",
+      "details": "All 4 FULL"
+    },
+    "leaf1": {
+      "router_name": "leaf1",
+      "router_id": "10.255.1.1",
+      "neighbors": [],
+      "expected_neighbor_count": 2,
+      "all_full": true,
+      "status": "PASS",
+      "details": "All 2 FULL"
+    }
+  },
+  "bgp_health": {
+    "spine1": {
+      "router_name": "spine1",
+      "local_as": 65000,
+      "peers": [],
+      "expected_peer_count": 4,
+      "all_established": true,
+      "status": "PASS",
+      "details": "All 4 Established"
+    },
+    "leaf1": {
+      "router_name": "leaf1",
+      "local_as": 65101,
+      "peers": [],
+      "expected_peer_count": 2,
+      "all_established": true,
+      "status": "PASS",
+      "details": "All 2 Established"
+    }
+  },
+  "routing_health": {
+    "leaf1": {
+      "router_name": "leaf1",
+      "routes": {},
+      "expected_prefixes": [
+        "172.16.12.0/24"
+      ],
+      "missing_prefixes": [],
+      "status": "PASS",
+      "details": "All routes installed"
+    }
+  },
+  "ecmp_health": {
+    "leaf1": {
+      "router_name": "leaf1",
+      "prefix_results": {
+        "172.16.12.0/24": {
+          "prefix": "172.16.12.0/24",
+          "installed_next_hops": [
+            "10.0.0.0",
+            "10.0.0.2"
+          ],
+          "expected_paths": 2,
+          "is_ecmp_active": true,
+          "bgp_multipath": true,
+          "kernel_multipath": true,
+          "details": "Installed 2 paths"
+        }
+      },
+      "all_ecmp_passed": true,
+      "status": "PASS",
+      "details": "All remote subnets multipath"
+    }
+  },
+  "connectivity": {
+    "results": [
+      {
+        "source_host": "host1",
+        "destination_host": "host2",
+        "destination_ip": "172.16.12.10",
+        "packets_transmitted": 3,
+        "packets_received": 3,
+        "packet_loss_pct": 0.0,
+        "avg_rtt_ms": 0.45,
+        "success": true,
+        "raw_output": ""
+      }
+    ],
+    "total_tests": 1,
+    "passed_tests": 1,
+    "failed_tests": 0,
+    "status": "PASS",
+    "details": "All tests passed"
+  },
+  "failures": []
+}

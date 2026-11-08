@@ -1,0 +1,198 @@
+# Single Source of Truth: Data Center Spine-Leaf Fabric Inventory
+# Defines topology, addressing, OSPF, eBGP, and ECMP policies for Containerlab and FRRouting
+
+lab:
+  name: "dc-fabric-lab"
+  prefix: "clab"
+  images:
+    frr: "quay.io/frrouting/frr:10.2.1"
+    host: "ghcr.io/hellt/network-multitool"
+
+ecmp:
+  enabled: true
+  maximum_paths: 2
+
+ospf:
+  process_id: 1
+  area: "0.0.0.0"
+  reference_bandwidth_mbps: 100000
+
+bgp:
+  multipath_as_path_relax: true
+
+routers:
+  - name: "spine1"
+    role: "spine"
+    asn: 65000
+    loopback:
+      ipv4: "10.255.0.1/32"
+    ospf:
+      enabled: true
+      router_id: "10.255.0.1"
+
+  - name: "spine2"
+    role: "spine"
+    asn: 65000
+    loopback:
+      ipv4: "10.255.0.2/32"
+    ospf:
+      enabled: true
+      router_id: "10.255.0.2"
+
+  - name: "leaf1"
+    role: "leaf"
+    asn: 65101
+    loopback:
+      ipv4: "10.255.1.1/32"
+    ospf:
+      enabled: true
+      router_id: "10.255.1.1"
+    server_subnet: "172.16.11.0/24"
+    server_interface:
+      name: "eth3"
+      ipv4: "172.16.11.1/24"
+
+  - name: "leaf2"
+    role: "leaf"
+    asn: 65102
+    loopback:
+      ipv4: "10.255.1.2/32"
+    ospf:
+      enabled: true
+      router_id: "10.255.1.2"
+    server_subnet: "172.16.12.0/24"
+    server_interface:
+      name: "eth3"
+      ipv4: "172.16.12.1/24"
+
+  - name: "leaf3"
+    role: "leaf"
+    asn: 65103
+    loopback:
+      ipv4: "10.255.1.3/32"
+    ospf:
+      enabled: true
+      router_id: "10.255.1.3"
+    server_subnet: "172.16.13.0/24"
+    server_interface:
+      name: "eth3"
+      ipv4: "172.16.13.1/24"
+
+  - name: "leaf4"
+    role: "leaf"
+    asn: 65104
+    loopback:
+      ipv4: "10.255.1.4/32"
+    ospf:
+      enabled: true
+      router_id: "10.255.1.4"
+    server_subnet: "172.16.14.0/24"
+    server_interface:
+      name: "eth3"
+      ipv4: "172.16.14.1/24"
+
+links:
+  # Leaf 1 to Spines
+  - source:
+      node: "spine1"
+      interface: "eth1"
+      ipv4: "10.0.0.0/31"
+    target:
+      node: "leaf1"
+      interface: "eth1"
+      ipv4: "10.0.0.1/31"
+
+  - source:
+      node: "spine2"
+      interface: "eth1"
+      ipv4: "10.0.0.2/31"
+    target:
+      node: "leaf1"
+      interface: "eth2"
+      ipv4: "10.0.0.3/31"
+
+  # Leaf 2 to Spines
+  - source:
+      node: "spine1"
+      interface: "eth2"
+      ipv4: "10.0.0.4/31"
+    target:
+      node: "leaf2"
+      interface: "eth1"
+      ipv4: "10.0.0.5/31"
+
+  - source:
+      node: "spine2"
+      interface: "eth2"
+      ipv4: "10.0.0.6/31"
+    target:
+      node: "leaf2"
+      interface: "eth2"
+      ipv4: "10.0.0.7/31"
+
+  # Leaf 3 to Spines
+  - source:
+      node: "spine1"
+      interface: "eth3"
+      ipv4: "10.0.0.8/31"
+    target:
+      node: "leaf3"
+      interface: "eth1"
+      ipv4: "10.0.0.9/31"
+
+  - source:
+      node: "spine2"
+      interface: "eth3"
+      ipv4: "10.0.0.10/31"
+    target:
+      node: "leaf3"
+      interface: "eth2"
+      ipv4: "10.0.0.11/31"
+
+  # Leaf 4 to Spines
+  - source:
+      node: "spine1"
+      interface: "eth4"
+      ipv4: "10.0.0.12/31"
+    target:
+      node: "leaf4"
+      interface: "eth1"
+      ipv4: "10.0.0.13/31"
+
+  - source:
+      node: "spine2"
+      interface: "eth4"
+      ipv4: "10.0.0.14/31"
+    target:
+      node: "leaf4"
+      interface: "eth2"
+      ipv4: "10.0.0.15/31"
+
+servers:
+  - name: "host1"
+    connected_to: "leaf1"
+    leaf_interface: "eth3"
+    interface: "eth1"
+    ipv4: "172.16.11.10/24"
+    gateway: "172.16.11.1"
+
+  - name: "host2"
+    connected_to: "leaf2"
+    leaf_interface: "eth3"
+    interface: "eth1"
+    ipv4: "172.16.12.10/24"
+    gateway: "172.16.12.1"
+
+  - name: "host3"
+    connected_to: "leaf3"
+    leaf_interface: "eth3"
+    interface: "eth1"
+    ipv4: "172.16.13.10/24"
+    gateway: "172.16.13.1"
+
+  - name: "host4"
+    connected_to: "leaf4"
+    leaf_interface: "eth3"
+    interface: "eth1"
+    ipv4: "172.16.14.10/24"
+    gateway: "172.16.14.1"

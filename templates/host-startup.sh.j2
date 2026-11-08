@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Host Startup Configuration for {{ server.name }}
+set -euo pipefail
+
+echo "Configuring network interface {{ server.interface }} on {{ server.name }}..."
+ip addr flush dev {{ server.interface }} || true
+ip addr add {{ server.ipv4 }} dev {{ server.interface }}
+ip link set {{ server.interface }} up
+
+echo "Configuring default gateway via {{ server.gateway }}..."
+ip route replace default via {{ server.gateway }}
+
+echo "Network configuration complete for {{ server.name }}."

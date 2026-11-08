@@ -1,0 +1,30 @@
+{
+  "routerId": "10.255.0.1",
+  "as": 65000,
+  "peers": {
+    "10.0.0.1": {
+      "remoteAs": 65101,
+      "state": "Established",
+      "pfxRcd": 1,
+      "pfxSnt": 3
+    },
+    "10.0.0.5": {
+      "remoteAs": 65102,
+      "state": "Established",
+      "pfxRcd": 1,
+      "pfxSnt": 3
+    },
+    "10.0.0.9": {
+      "remoteAs": 65103,
+      "state": "Established",
+      "pfxRcd": 1,
+      "pfxSnt": 3
+    },
+    "10.0.0.13": {
+      "remoteAs": 65104,
+      "state": "Established",
+      "pfxRcd": 1,
+      "pfxSnt": 3
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "neighbors": {
+    "10.0.0.0": [
+      {
+        "neighborId": "10.255.0.1",
+        "routerId": "10.255.0.1",
+        "priority": 1,
+        "converged": "Full/DR",
+        "nbrState": "Full",
+        "deadTimeMsecs": 38200,
+        "ifaceName": "eth1",
+        "ipAddress": "10.0.0.0"
+      }
+    ],
+    "10.0.0.2": [
+      {
+        "neighborId": "10.255.0.2",
+        "routerId": "10.255.0.2",
+        "priority": 1,
+        "converged": "Init/DROther",
+        "nbrState": "Init",
+        "deadTimeMsecs": 37800,
+        "ifaceName": "eth2",
+        "ipAddress": "10.0.0.2"
+      }
+    ]
+  }
+}
